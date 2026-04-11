@@ -1,15 +1,16 @@
 'use client'
 
-import { use } from 'react'
+import { use, useState } from 'react'
 import Link from 'next/link'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, RefreshCw, Building2 } from 'lucide-react'
+import { ArrowLeft, RefreshCw, Building2, Download } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { RfcStatusBadge } from '@/components/rfcs/RfcStatusBadge'
+import { DownloadPeriodModal } from '@/components/rfcs/DownloadPeriodModal'
 import { api } from '@/lib/api'
 import type { RfcAccount } from '@/types'
 
@@ -35,6 +36,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 export default function RfcDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const queryClient = useQueryClient()
+  const [showDownload, setShowDownload] = useState(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ['rfc-account', id],
@@ -73,6 +75,14 @@ export default function RfcDetailPage({ params }: { params: Promise<{ id: string
             </>
           )}
         </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setShowDownload(true)}
+        >
+          <Download className="h-4 w-4 mr-1.5" />
+          Descargar periodo
+        </Button>
         <Button
           size="sm"
           variant="outline"
@@ -165,6 +175,15 @@ export default function RfcDetailPage({ params }: { params: Promise<{ id: string
           Ver CFDIs de este RFC
         </Link>
       </div>
+
+      {rfc && (
+        <DownloadPeriodModal
+          rfcAccountId={id}
+          rfc={rfc.rfc}
+          open={showDownload}
+          onClose={() => setShowDownload(false)}
+        />
+      )}
     </div>
   )
 }
