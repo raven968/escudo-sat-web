@@ -129,8 +129,8 @@ export function CfdiChart() {
                 width={view === 'amount' ? 52 : 36}
               />
               <Tooltip
-                formatter={(value: number, name: string) => [
-                  view === 'amount' ? formatMXN(value) : value,
+                formatter={(value, name) => [
+                  view === 'amount' ? formatMXN(Number(value)) : value,
                   name === 'emitidos' ? 'Emitidos' : 'Recibidos',
                 ]}
                 labelFormatter={(label) => `Mes: ${label}`}
