@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import { Bell, LogOut, User } from 'lucide-react'
+import { Bell, LogOut, ShieldCheck, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuthStore } from '@/store/auth'
 import { api } from '@/lib/api'
+import { MobileNav } from './MobileNav'
 
 export function Header() {
   const router = useRouter()
@@ -42,8 +43,16 @@ export function Header() {
     : 'U'
 
   return (
-    <header className="h-14 border-b flex items-center justify-between px-6 bg-background sticky top-0 z-10">
-      <div />
+    <header className="h-14 border-b flex items-center justify-between px-4 md:px-6 bg-background sticky top-0 z-10">
+      <div className="flex items-center gap-2 md:hidden">
+        <MobileNav />
+        <div className="flex items-center gap-1.5">
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          <span className="font-bold text-sm">Escudo SAT</span>
+        </div>
+      </div>
+      <div className="hidden md:block" />
+
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"

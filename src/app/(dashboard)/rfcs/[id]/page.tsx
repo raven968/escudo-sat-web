@@ -176,14 +176,12 @@ export default function RfcDetailPage({ params }: { params: Promise<{ id: string
         </Link>
       </div>
 
-      {rfc && (
-        <DownloadPeriodModal
-          rfcAccountId={id}
-          rfc={rfc.rfc}
-          open={showDownload}
-          onClose={() => setShowDownload(false)}
-        />
-      )}
+      <DownloadPeriodModal
+        rfcAccountId={id}
+        rfc={rfc?.rfc ?? ''}
+        open={showDownload}
+        onClose={() => setShowDownload(false)}
+      />
     </div>
   )
 }

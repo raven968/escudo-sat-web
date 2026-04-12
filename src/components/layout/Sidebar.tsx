@@ -17,7 +17,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="flex flex-col w-64 border-r bg-background h-screen sticky top-0">
+    <aside className="hidden md:flex flex-col w-64 border-r bg-background h-screen sticky top-0">
       <div className="flex items-center gap-2 px-6 py-5 border-b">
         <ShieldCheck className="h-6 w-6 text-primary" />
         <span className="font-bold text-lg">Escudo SAT</span>
