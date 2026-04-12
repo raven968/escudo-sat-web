@@ -1,24 +1,25 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth'
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const token = useAuthStore((s) => s.token)
-  const hasHydrated = useAuthStore((s) => s._hasHydrated)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    if (hasHydrated && !token) {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (mounted && !token) {
       router.replace('/login')
     }
-  }, [hasHydrated, token, router])
+  }, [mounted, token, router])
 
-  // Esperar hidratación antes de renderizar o redirigir
-  if (!hasHydrated) return null
-
-  if (!token) return null
+  if (!mounted || !token) return null
 
   return <>{children}</>
 }
