@@ -7,19 +7,22 @@ import { useAuthStore } from '@/store/auth'
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const token = useAuthStore((s) => s.token)
-  const [mounted, setMounted] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    // Zustand v5: hasHydrated() retorna true si localStorage ya fue leído
+    setHydrated(useAuthStore.persist.hasHydrated())
+    const unsub = useAuthStore.persist.onFinishHydration(() => setHydrated(true))
+    return unsub
   }, [])
 
   useEffect(() => {
-    if (mounted && !token) {
+    if (hydrated && !token) {
       router.replace('/login')
     }
-  }, [mounted, token, router])
+  }, [hydrated, token, router])
 
-  if (!mounted || !token) return null
+  if (!hydrated || !token) return null
 
   return <>{children}</>
 }
