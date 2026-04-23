@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { User, Building2, Lock } from 'lucide-react'
 import { BillingCard } from '@/components/configuracion/BillingCard'
 import { Button } from '@/components/ui/button'
@@ -35,13 +35,13 @@ export default function ConfiguracionPage() {
   useEffect(() => {
     const checkout = searchParams.get('checkout')
     if (checkout === 'success') {
-      toast.success('¡Suscripción activada! Bienvenido a tu nuevo plan.')
+      sileo.success({ title: '¡Suscripción activada! Bienvenido a tu nuevo plan.' })
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['me'] })
       router.replace('/configuracion')
     }
     if (checkout === 'cancel') {
-      toast.info('Proceso de pago cancelado.')
+      sileo.info({ title: 'Proceso de pago cancelado.' })
       router.replace('/configuracion')
     }
   }, [searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -94,11 +94,11 @@ function ProfileForm({ me, onUpdate }: { me: MeResponse; onUpdate: (u: UserType)
     onSuccess: (data) => {
       queryClient.setQueryData(['me'], data)
       onUpdate(data)
-      toast.success('Perfil actualizado correctamente.')
+      sileo.success({ title: 'Perfil actualizado correctamente.' })
     },
     onError: (err: { message?: string; errors?: Record<string, string[]> }) => {
       const msg = Object.values(err.errors ?? {}).flat()[0] ?? err.message ?? 'Error al guardar.'
-      toast.error(msg)
+      sileo.error({ title: msg })
     },
   })
 
@@ -159,11 +159,11 @@ function TenantForm({ me }: { me: MeResponse }) {
       api.put<MeResponse>('/auth/tenant', data),
     onSuccess: (data) => {
       queryClient.setQueryData(['me'], data)
-      toast.success('Datos del despacho actualizados.')
+      sileo.success({ title: 'Datos del despacho actualizados.' })
     },
     onError: (err: { message?: string; errors?: Record<string, string[]> }) => {
       const msg = Object.values(err.errors ?? {}).flat()[0] ?? err.message ?? 'Error al guardar.'
-      toast.error(msg)
+      sileo.error({ title: msg })
     },
   })
 
@@ -220,14 +220,14 @@ function PasswordForm() {
     mutationFn: (data: { current_password: string; password: string; password_confirmation: string }) =>
       api.put('/auth/password', data),
     onSuccess: () => {
-      toast.success('Contraseña actualizada correctamente.')
+      sileo.success({ title: 'Contraseña actualizada correctamente.' })
       setCurrentPassword('')
       setPassword('')
       setPasswordConfirmation('')
     },
     onError: (err: { message?: string; errors?: Record<string, string[]> }) => {
       const msg = Object.values(err.errors ?? {}).flat()[0] ?? err.message ?? 'Error al cambiar contraseña.'
-      toast.error(msg)
+      sileo.error({ title: msg })
     },
   })
 

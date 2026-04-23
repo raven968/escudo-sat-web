@@ -4,7 +4,7 @@ import { use, useState } from 'react'
 import Link from 'next/link'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, RefreshCw, Building2, Download } from 'lucide-react'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -51,10 +51,10 @@ export default function RfcDetailPage({ params }: { params: Promise<{ id: string
   const syncMutation = useMutation({
     mutationFn: () => api.post(`/rfc-accounts/${id}/sync`),
     onSuccess: () => {
-      toast.success('Sincronización iniciada')
+      sileo.success({ title: 'Sincronización iniciada' })
       queryClient.invalidateQueries({ queryKey: ['rfc-account', id] })
     },
-    onError: () => toast.error('No se pudo iniciar la sincronización'),
+    onError: () => sileo.error({ title: 'No se pudo iniciar la sincronización' }),
   })
 
   const rfc = data?.data

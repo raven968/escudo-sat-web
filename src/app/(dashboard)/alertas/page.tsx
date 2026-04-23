@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Select,
@@ -48,7 +48,7 @@ export default function AlertasPage() {
       queryClient.invalidateQueries({ queryKey: ['alerts-unread-count'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
     },
-    onError: () => toast.error('No se pudo marcar la alerta'),
+    onError: () => sileo.error({ title: 'No se pudo marcar la alerta' }),
   })
 
   const resolveMutation = useMutation({
@@ -56,9 +56,9 @@ export default function AlertasPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['alerts'] })
       queryClient.invalidateQueries({ queryKey: ['alerts-unread-count'] })
-      toast.success('Alerta marcada como resuelta')
+      sileo.success({ title: 'Alerta marcada como resuelta' })
     },
-    onError: () => toast.error('No se pudo resolver la alerta'),
+    onError: () => sileo.error({ title: 'No se pudo resolver la alerta' }),
   })
 
   async function handleMarkAllRead() {
@@ -68,7 +68,7 @@ export default function AlertasPage() {
     queryClient.invalidateQueries({ queryKey: ['alerts-recent'] })
     queryClient.invalidateQueries({ queryKey: ['alerts-unread-count'] })
     queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
-    toast.success('Todas las alertas marcadas como leídas')
+    sileo.success({ title: 'Todas las alertas marcadas como leídas' })
   }
 
   const unreadCount = data?.data.filter((a) => !a.is_read).length ?? 0

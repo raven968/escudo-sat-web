@@ -30,6 +30,24 @@ export const emptyFilters: CfdiFilters = {
   fecha_hasta: '',
 }
 
+const DIRECTION_ITEMS = [
+  { value: 'emitido', label: 'Emitidas' },
+  { value: 'recibido', label: 'Recibidas' },
+]
+
+const TIPO_ITEMS = [
+  { value: 'I', label: 'Ingreso' },
+  { value: 'E', label: 'Egreso' },
+  { value: 'P', label: 'Pago' },
+  { value: 'N', label: 'Nómina' },
+  { value: 'T', label: 'Traslado' },
+]
+
+const ESTATUS_ITEMS = [
+  { value: 'vigente', label: 'Vigente' },
+  { value: 'cancelado', label: 'Cancelado' },
+]
+
 interface CfdiFiltersProps {
   filters: CfdiFilters
   onChange: (filters: CfdiFilters) => void
@@ -43,51 +61,75 @@ export function CfdiFiltersBar({ filters, onChange, rfcs }: CfdiFiltersProps) {
     onChange({ ...filters, [key]: value })
   }
 
+  const rfcItems = rfcs?.map((r) => ({ value: r.id, label: r.rfc })) ?? []
+
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Select value={filters.rfc_account_id} onValueChange={(v) => set('rfc_account_id', v ?? '')}>
+      <Select
+        value={filters.rfc_account_id}
+        onValueChange={(v) => set('rfc_account_id', v ?? '')}
+        items={rfcItems}
+      >
         <SelectTrigger className="w-48">
           <SelectValue placeholder="Todos los RFCs" />
         </SelectTrigger>
         <SelectContent>
           {rfcs?.map((r) => (
-            <SelectItem key={r.id} value={r.id}>
+            <SelectItem key={r.id} value={r.id} label={r.rfc}>
               {r.rfc}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
 
-      <Select value={filters.direction} onValueChange={(v) => set('direction', v ?? '')}>
+      <Select
+        value={filters.direction}
+        onValueChange={(v) => set('direction', v ?? '')}
+        items={DIRECTION_ITEMS}
+      >
         <SelectTrigger className="w-36">
           <SelectValue placeholder="Dirección" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="emitido">Emitidas</SelectItem>
-          <SelectItem value="recibido">Recibidas</SelectItem>
+          {DIRECTION_ITEMS.map((item) => (
+            <SelectItem key={item.value} value={item.value} label={item.label}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
-      <Select value={filters.tipo_comprobante} onValueChange={(v) => set('tipo_comprobante', v ?? '')}>
+      <Select
+        value={filters.tipo_comprobante}
+        onValueChange={(v) => set('tipo_comprobante', v ?? '')}
+        items={TIPO_ITEMS}
+      >
         <SelectTrigger className="w-40">
           <SelectValue placeholder="Tipo" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="I">Ingreso</SelectItem>
-          <SelectItem value="E">Egreso</SelectItem>
-          <SelectItem value="P">Pago</SelectItem>
-          <SelectItem value="N">Nómina</SelectItem>
-          <SelectItem value="T">Traslado</SelectItem>
+          {TIPO_ITEMS.map((item) => (
+            <SelectItem key={item.value} value={item.value} label={item.label}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
-      <Select value={filters.estatus} onValueChange={(v) => set('estatus', v ?? '')}>
+      <Select
+        value={filters.estatus}
+        onValueChange={(v) => set('estatus', v ?? '')}
+        items={ESTATUS_ITEMS}
+      >
         <SelectTrigger className="w-36">
           <SelectValue placeholder="Estatus" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="vigente">Vigente</SelectItem>
-          <SelectItem value="cancelado">Cancelado</SelectItem>
+          {ESTATUS_ITEMS.map((item) => (
+            <SelectItem key={item.value} value={item.value} label={item.label}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 

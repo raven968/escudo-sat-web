@@ -66,14 +66,21 @@ export function CfdiChart() {
       <CardHeader className="flex flex-row items-center justify-between pb-4 flex-wrap gap-2">
         <CardTitle className="text-base">CFDIs por mes</CardTitle>
         <div className="flex items-center gap-2">
-          <Select value={rfcId} onValueChange={(v) => setRfcId(v ?? '')}>
+          <Select
+            value={rfcId}
+            onValueChange={(v) => setRfcId(v ?? '')}
+            items={[
+              { value: '', label: 'Todos los RFCs' },
+              ...(rfcs?.map((rfc) => ({ value: rfc.id, label: `${rfc.rfc} — ${rfc.razon_social}` })) ?? []),
+            ]}
+          >
             <SelectTrigger className="w-48 h-8 text-sm">
               <SelectValue placeholder="Todos los RFCs" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos los RFCs</SelectItem>
+              <SelectItem value="" label="Todos los RFCs">Todos los RFCs</SelectItem>
               {rfcs?.map((rfc) => (
-                <SelectItem key={rfc.id} value={rfc.id}>
+                <SelectItem key={rfc.id} value={rfc.id} label={`${rfc.rfc} — ${rfc.razon_social}`}>
                   {rfc.rfc} — {rfc.razon_social}
                 </SelectItem>
               ))}

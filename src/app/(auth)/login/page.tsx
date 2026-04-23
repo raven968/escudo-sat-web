@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -39,7 +39,7 @@ export default function LoginPage() {
         err && typeof err === 'object' && 'message' in err
           ? String((err as { message: string }).message)
           : 'Error al iniciar sesión'
-      toast.error(message)
+      sileo.error({ title: message })
     } finally {
       setLoading(false)
     }

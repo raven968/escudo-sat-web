@@ -34,8 +34,32 @@ async function request<T>(
   return res.json()
 }
 
+async function downloadFile(path: string, filename: string): Promise<void> {
+  const token = getToken()
+  const res = await fetch(`${API_URL}${path}`, {
+    headers: {
+      Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ message: 'Error al exportar' }))
+    throw { status: res.status, ...error }
+  }
+
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export const api = {
   get: <T>(path: string) => request<T>(path),
+  download: (path: string, filename: string) => downloadFile(path, filename),
 
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'POST', body: JSON.stringify(body) }),

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
@@ -34,10 +34,10 @@ export default function RfcsPage() {
     setSyncing(id)
     try {
       await api.post(`/rfc-accounts/${id}/sync`)
-      toast.success('Sincronización iniciada')
+      sileo.success({ title: 'Sincronización iniciada' })
       queryClient.invalidateQueries({ queryKey: ['rfc-accounts'] })
     } catch {
-      toast.error('No se pudo iniciar la sincronización')
+      sileo.error({ title: 'No se pudo iniciar la sincronización' })
     } finally {
       setSyncing(null)
     }
@@ -46,11 +46,11 @@ export default function RfcsPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/rfc-accounts/${id}`),
     onSuccess: () => {
-      toast.success('RFC eliminado')
+      sileo.success({ title: 'RFC eliminado' })
       queryClient.invalidateQueries({ queryKey: ['rfc-accounts'] })
       setDeleteId(null)
     },
-    onError: () => toast.error('No se pudo eliminar el RFC'),
+    onError: () => sileo.error({ title: 'No se pudo eliminar el RFC' }),
   })
 
   return (

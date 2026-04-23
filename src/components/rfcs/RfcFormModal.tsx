@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { useQueryClient } from '@tanstack/react-query'
 import { FormModal } from '@/components/ui/form-modal'
 import { Input } from '@/components/ui/input'
@@ -44,7 +44,7 @@ export function RfcFormModal({ open, onClose }: RfcFormModalProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!cerFile || !keyFile) {
-      toast.error('Debes subir los archivos .cer y .key de la e.firma')
+      sileo.error({ title: 'Debes subir los archivos .cer y .key de la e.firma' })
       return
     }
 
@@ -59,16 +59,16 @@ export function RfcFormModal({ open, onClose }: RfcFormModalProps) {
     setLoading(true)
     try {
       await api.postForm('/rfc-accounts', body)
-      toast.success('RFC registrado correctamente')
+      sileo.success({ title: 'RFC registrado correctamente' })
       queryClient.invalidateQueries({ queryKey: ['rfc-accounts'] })
       handleClose()
     } catch (err: unknown) {
       const apiErr = err as { message?: string; errors?: Record<string, string[]> }
       if (apiErr?.errors) {
         const firstError = Object.values(apiErr.errors)[0]?.[0]
-        toast.error(firstError ?? 'Error al registrar el RFC')
+        sileo.error({ title: firstError ?? 'Error al registrar el RFC' })
       } else {
-        toast.error(apiErr?.message ?? 'Error al registrar el RFC')
+        sileo.error({ title: apiErr?.message ?? 'Error al registrar el RFC' })
       }
     } finally {
       setLoading(false)

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -36,7 +36,7 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (form.password !== form.password_confirmation) {
-      toast.error('Las contraseñas no coinciden')
+      sileo.error({ title: 'Las contraseñas no coinciden' })
       return
     }
     setLoading(true)
@@ -48,9 +48,9 @@ export default function RegisterPage() {
       const apiErr = err as { message?: string; errors?: Record<string, string[]> }
       if (apiErr?.errors) {
         const firstError = Object.values(apiErr.errors)[0]?.[0]
-        toast.error(firstError ?? 'Error al registrarse')
+        sileo.error({ title: firstError ?? 'Error al registrarse' })
       } else {
-        toast.error(apiErr?.message ?? 'Error al registrarse')
+        sileo.error({ title: apiErr?.message ?? 'Error al registrarse' })
       }
     } finally {
       setLoading(false)

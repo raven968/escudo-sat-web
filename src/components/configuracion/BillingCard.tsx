@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { CreditCard, Zap } from 'lucide-react'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -39,13 +39,13 @@ export function BillingCard() {
     mutationFn: (plan_key: string) =>
       api.post<{ checkout_url: string }>('/subscription/checkout', { plan: plan_key }),
     onSuccess: ({ checkout_url }) => { window.location.href = checkout_url },
-    onError: () => toast.error('No se pudo iniciar el proceso de pago.'),
+    onError: () => sileo.error({ title: 'No se pudo iniciar el proceso de pago.' }),
   })
 
   const portalMutation = useMutation({
     mutationFn: () => api.post<{ portal_url: string }>('/subscription/billing-portal'),
     onSuccess: ({ portal_url }) => { window.location.href = portal_url },
-    onError: () => toast.error('No se pudo abrir el portal de facturación.'),
+    onError: () => sileo.error({ title: 'No se pudo abrir el portal de facturación.' }),
   })
 
   if (loadingCurrent || loadingPlans) {

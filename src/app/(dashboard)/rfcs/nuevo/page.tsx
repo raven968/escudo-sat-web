@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -32,7 +32,7 @@ export default function NuevoRfcPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!cerFile || !keyFile) {
-      toast.error('Debes subir los archivos .cer y .key de la e.firma')
+      sileo.error({ title: 'Debes subir los archivos .cer y .key de la e.firma' })
       return
     }
 
@@ -47,15 +47,15 @@ export default function NuevoRfcPage() {
     setLoading(true)
     try {
       await api.postForm('/rfc-accounts', body)
-      toast.success('RFC registrado correctamente')
+      sileo.success({ title: 'RFC registrado correctamente' })
       router.push('/rfcs')
     } catch (err: unknown) {
       const apiErr = err as { message?: string; errors?: Record<string, string[]> }
       if (apiErr?.errors) {
         const firstError = Object.values(apiErr.errors)[0]?.[0]
-        toast.error(firstError ?? 'Error al registrar el RFC')
+        sileo.error({ title: firstError ?? 'Error al registrar el RFC' })
       } else {
-        toast.error(apiErr?.message ?? 'Error al registrar el RFC')
+        sileo.error({ title: apiErr?.message ?? 'Error al registrar el RFC' })
       }
     } finally {
       setLoading(false)

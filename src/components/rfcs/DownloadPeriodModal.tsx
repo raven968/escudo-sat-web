@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { sileo } from 'sileo'
 import { Download } from 'lucide-react'
 import { FormModal } from '@/components/ui/form-modal'
 import { Button } from '@/components/ui/button'
@@ -35,12 +35,12 @@ export function DownloadPeriodModal({ rfcAccountId, rfc, open, onClose }: Props)
     mutationFn: () =>
       api.post(`/rfc-accounts/${rfcAccountId}/download`, { date_from, date_to }),
     onSuccess: () => {
-      toast.success('Descarga iniciada. Los CFDIs aparecerán en cuanto el SAT procese la solicitud.')
+      sileo.success({ title: 'Descarga iniciada', description: 'Los CFDIs aparecerán en cuanto el SAT procese la solicitud.' })
       onClose()
     },
     onError: (err: { message?: string; errors?: Record<string, string[]> }) => {
       const msg = Object.values(err.errors ?? {}).flat()[0] ?? err.message ?? 'Error al iniciar la descarga.'
-      toast.error(msg)
+      sileo.error({ title: msg })
     },
   })
 
