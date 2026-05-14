@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { RefreshCw, Trash2, Eye } from 'lucide-react'
+import { RefreshCw, Trash2, Eye, Plus } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -20,6 +20,7 @@ interface RfcTableProps {
   isLoading: boolean
   onSync: (id: string) => void
   onDelete: (id: string) => void
+  onAdd?: () => void
   syncing: string | null
 }
 
@@ -28,7 +29,7 @@ function formatDate(date: string | null) {
   return new Intl.DateTimeFormat('es-MX', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(date))
 }
 
-export function RfcTable({ rfcs, isLoading, onSync, onDelete, syncing }: RfcTableProps) {
+export function RfcTable({ rfcs, isLoading, onSync, onDelete, onAdd, syncing }: RfcTableProps) {
   if (isLoading) {
     return (
       <div className="space-y-2">
@@ -42,10 +43,13 @@ export function RfcTable({ rfcs, isLoading, onSync, onDelete, syncing }: RfcTabl
   if (!rfcs || rfcs.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground text-sm">
-        No hay RFCs registrados.{' '}
-        <Link href="/rfcs/nuevo" className="text-primary underline-offset-4 hover:underline">
-          Agrega el primero
-        </Link>
+        <p>No hay RFCs registrados.</p>
+        {onAdd && (
+          <Button variant="outline" size="sm" className="mt-3" onClick={onAdd}>
+            <Plus className="h-4 w-4" />
+            Agrega el primero
+          </Button>
+        )}
       </div>
     )
   }

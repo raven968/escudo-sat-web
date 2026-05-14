@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { sileo } from 'sileo'
 import { User, Building2, Lock } from 'lucide-react'
-import { BillingCard } from '@/components/configuracion/BillingCard'
+// Stripe congelado — reactivar BillingCard al reintegrar suscripciones
+// import { BillingCard } from '@/components/configuracion/BillingCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,37 +14,14 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
-import type { User as UserType } from '@/types'
+import type { Tenant, User as UserType } from '@/types'
 
 interface MeResponse extends UserType {
-  tenant: {
-    id: string
-    name: string
-    email: string
-    subscription_plan: string
-    subscription_status: string
-  }
+  tenant: Tenant
 }
 
 export default function ConfiguracionPage() {
   const { setAuth, token } = useAuthStore()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const queryClient = useQueryClient()
-
-  useEffect(() => {
-    const checkout = searchParams.get('checkout')
-    if (checkout === 'success') {
-      sileo.success({ title: '¡Suscripción activada! Bienvenido a tu nuevo plan.' })
-      queryClient.invalidateQueries({ queryKey: ['subscription'] })
-      queryClient.invalidateQueries({ queryKey: ['me'] })
-      router.replace('/configuracion')
-    }
-    if (checkout === 'cancel') {
-      sileo.info({ title: 'Proceso de pago cancelado.' })
-      router.replace('/configuracion')
-    }
-  }, [searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: me, isLoading } = useQuery<MeResponse>({
     queryKey: ['me'],
@@ -74,7 +51,7 @@ export default function ConfiguracionPage() {
 
       {me.role === 'admin' && <TenantForm me={me} />}
 
-      {me.role === 'admin' && <BillingCard />}
+      {/* Stripe congelado — reactivar <BillingCard /> al reintegrar suscripciones */}
 
       <PasswordForm />
     </div>
@@ -195,8 +172,10 @@ function TenantForm({ me }: { me: MeResponse }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-muted-foreground">Plan actual</Label>
-            <p className="text-sm font-medium capitalize">{me.tenant.subscription_plan}</p>
+            <Label className="text-muted-foreground">RFCs contratados</Label>
+            <p className="text-sm font-medium">
+              {me.tenant.rfc_limit ?? 0} RFC{me.tenant.rfc_limit === 1 ? '' : 's'}
+            </p>
           </div>
           <div className="flex justify-end">
             <Button type="submit" disabled={mutation.isPending}>

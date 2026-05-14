@@ -1,8 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Building2, FileText, Bell, Settings, ShieldCheck } from 'lucide-react'
+import { LayoutDashboard, Building2, FileText, Bell, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -18,8 +19,8 @@ export function Sidebar() {
 
   return (
     <aside className="hidden md:flex flex-col w-64 border-r bg-background h-screen sticky top-0">
-      <div className="flex items-center gap-2 px-6 py-5 border-b">
-        <ShieldCheck className="h-6 w-6 text-primary" />
+      <div className="flex items-center gap-2.5 px-6 py-4 border-b">
+        <Image src="/logo.png" alt="Escudo SAT" width={28} height={32} className="shrink-0" />
         <span className="font-bold text-lg">Escudo SAT</span>
       </div>
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">

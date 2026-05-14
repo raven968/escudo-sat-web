@@ -21,8 +21,9 @@ export interface Tenant {
   id: string
   name: string
   email: string
-  subscription_plan: PlanKey
-  subscription_status: string
+  rfc_limit: number | null
+  subscription_plan: PlanKey | null
+  subscription_status: string | null
   stripe_id: string | null
   created_at: string
   updated_at: string
@@ -34,6 +35,7 @@ export interface User {
   name: string
   email: string
   role: 'admin' | 'contador' | 'asistente'
+  tenant?: Tenant
   created_at: string
   updated_at: string
 }

@@ -1,10 +1,13 @@
 'use client'
 
-import { Download, AlertTriangle } from 'lucide-react'
+import { useState } from 'react'
+import { Download, AlertTriangle, Loader2 } from 'lucide-react'
+import { sileo } from 'sileo'
 import { FormModal } from '@/components/ui/form-modal'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { api } from '@/lib/api'
 import type { Cfdi } from '@/types'
 
 const tipoLabel: Record<string, string> = {
@@ -38,22 +41,23 @@ interface CfdiDetailModalProps {
 }
 
 export function CfdiDetailModal({ cfdi, onClose }: CfdiDetailModalProps) {
+  const [downloading, setDownloading] = useState(false)
+
   if (!cfdi) return null
 
   async function handleDownloadXml() {
-    const token = localStorage.getItem('auth_token')
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/cfdis/${cfdi!.id}/xml`,
-      { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } }
-    )
-    if (!res.ok) return
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${cfdi!.uuid_fiscal}.xml`
-    a.click()
-    URL.revokeObjectURL(url)
+    setDownloading(true)
+    try {
+      const { url } = await api.get<{ url: string }>(`/cfdis/${cfdi!.id}/xml`)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${cfdi!.uuid_fiscal}.xml`
+      a.click()
+    } catch {
+      sileo.error({ title: 'No se pudo descargar el XML' })
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (
@@ -125,10 +129,14 @@ export function CfdiDetailModal({ cfdi, onClose }: CfdiDetailModalProps) {
             variant="outline"
             size="sm"
             onClick={handleDownloadXml}
-            disabled={!cfdi.xml_s3_path}
+            disabled={!cfdi.xml_s3_path || downloading}
             className="gap-1.5"
           >
-            <Download className="h-3.5 w-3.5" />
+            {downloading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Download className="h-3.5 w-3.5" />
+            )}
             Descargar XML
           </Button>
         </div>

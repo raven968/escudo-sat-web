@@ -10,18 +10,14 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { RfcTable } from '@/components/rfcs/RfcTable'
 import { RfcFormModal } from '@/components/rfcs/RfcFormModal'
 import { api } from '@/lib/api'
-import type { PaginatedResponse, RfcAccount, SubscriptionCurrent } from '@/types'
+import { useAuthStore } from '@/store/auth'
+import type { PaginatedResponse, RfcAccount } from '@/types'
 
 export default function RfcsPage() {
   const queryClient = useQueryClient()
   const [showForm, setShowForm] = useState(false)
+  const user = useAuthStore((s) => s.user)
 
-  const { data: subscription } = useQuery<SubscriptionCurrent>({
-    queryKey: ['subscription', 'current'],
-    queryFn: () => api.get('/subscription/current'),
-  })
-
-  const at_limit = subscription ? subscription.rfc_count >= subscription.rfc_limit : false
   const [syncing, setSyncing] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
@@ -29,6 +25,10 @@ export default function RfcsPage() {
     queryKey: ['rfc-accounts'],
     queryFn: () => api.get<PaginatedResponse<RfcAccount>>('/rfc-accounts'),
   })
+
+  const rfc_limit = user?.tenant?.rfc_limit ?? 0
+  const rfc_count = data?.meta?.total ?? 0
+  const at_limit = rfc_count >= rfc_limit
 
   async function handleSync(id: string) {
     setSyncing(id)
@@ -69,8 +69,7 @@ export default function RfcsPage() {
           </Button>
           {at_limit && (
             <p className="text-xs text-muted-foreground">
-              Límite alcanzado.{' '}
-              <a href="/configuracion" className="underline hover:text-foreground">Actualiza tu plan</a>
+              Has alcanzado el límite contratado ({rfc_limit}). Contacta a soporte para ampliarlo.
             </p>
           )}
         </div>
@@ -83,6 +82,7 @@ export default function RfcsPage() {
             isLoading={isLoading}
             onSync={handleSync}
             onDelete={setDeleteId}
+            onAdd={() => setShowForm(true)}
             syncing={syncing}
           />
         </CardContent>

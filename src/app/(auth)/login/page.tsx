@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { sileo } from 'sileo'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -79,16 +78,10 @@ export default function LoginPage() {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-3">
+        <CardFooter>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </Button>
-          <p className="text-sm text-muted-foreground text-center">
-            ¿No tienes cuenta?{' '}
-            <Link href="/register" className="text-primary underline-offset-4 hover:underline">
-              Regístrate
-            </Link>
-          </p>
         </CardFooter>
       </form>
     </Card>

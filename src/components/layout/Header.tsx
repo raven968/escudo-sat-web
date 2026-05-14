@@ -1,8 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import { Bell, LogOut, ShieldCheck, User } from 'lucide-react'
+import { Bell, LogOut, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -47,7 +48,7 @@ export function Header() {
       <div className="flex items-center gap-2 md:hidden">
         <MobileNav />
         <div className="flex items-center gap-1.5">
-          <ShieldCheck className="h-4 w-4 text-primary" />
+          <Image src="/logo.png" alt="Escudo SAT" width={18} height={20} className="shrink-0" />
           <span className="font-bold text-sm">Escudo SAT</span>
         </div>
       </div>

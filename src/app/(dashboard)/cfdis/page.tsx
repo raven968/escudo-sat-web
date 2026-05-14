@@ -10,7 +10,7 @@ import { CfdiTable } from '@/components/cfdis/CfdiTable'
 import { CfdiDetailModal } from '@/components/cfdis/CfdiDetailModal'
 import { api } from '@/lib/api'
 import { sileo } from 'sileo'
-import { FileSpreadsheet, Loader2 } from 'lucide-react'
+import { FileSpreadsheet, FileArchive, Loader2 } from 'lucide-react'
 import type { Cfdi, PaginatedResponse, RfcAccount } from '@/types'
 
 function buildQuery(filters: CfdiFilters, page: number) {
@@ -45,6 +45,7 @@ export default function CfdisPage() {
   const [page, setPage] = useState(1)
   const [selectedCfdi, setSelectedCfdi] = useState<Cfdi | null>(null)
   const [isExporting, setIsExporting] = useState(false)
+  const [isExportingZip, setIsExportingZip] = useState(false)
 
   const handleFiltersChange = useCallback((f: CfdiFilters) => {
     setFilters(f)
@@ -77,6 +78,27 @@ export default function CfdisPage() {
     }
   }
 
+  async function handleExportZip() {
+    const cfdi_ids = data?.data.map((c) => c.id) ?? []
+    if (cfdi_ids.length === 0) return
+    setIsExportingZip(true)
+    try {
+      const { url, filename, count } = await api.post<{ url: string; filename: string; count: number }>(
+        '/cfdis/export',
+        { cfdi_ids },
+      )
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      sileo.success({ title: 'ZIP listo', description: `${count} XML${count !== 1 ? 's' : ''} descargados.` })
+    } catch {
+      sileo.error({ title: 'Error al exportar', description: 'No se pudo generar el ZIP.' })
+    } finally {
+      setIsExportingZip(false)
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between">
@@ -86,20 +108,36 @@ export default function CfdisPage() {
             {meta?.total ?? 0} comprobante{meta?.total !== 1 ? 's' : ''} encontrados
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExport}
-          disabled={isExporting || (meta?.total ?? 0) === 0}
-          className="gap-2"
-        >
-          {isExporting ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <FileSpreadsheet className="h-4 w-4" />
-          )}
-          {isExporting ? 'Exportando...' : 'Exportar Excel'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportZip}
+            disabled={isExportingZip || (data?.data.length ?? 0) === 0}
+            className="gap-2"
+          >
+            {isExportingZip ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FileArchive className="h-4 w-4" />
+            )}
+            {isExportingZip ? 'Generando...' : 'Descargar XMLs'}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={isExporting || (meta?.total ?? 0) === 0}
+            className="gap-2"
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FileSpreadsheet className="h-4 w-4" />
+            )}
+            {isExporting ? 'Exportando...' : 'Exportar Excel'}
+          </Button>
+        </div>
       </div>
 
       <CfdiFiltersBar
